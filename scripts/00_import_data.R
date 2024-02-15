@@ -1,8 +1,8 @@
 #' ------------------------------------------------------
 #' @author Thiago Cordeiro Almeida
 #' @code-description Download data
-#' @last-update 2024-02-14
-#' @update-description Adjusting loop and handling data
+#' @last-update 2024-02-15
+#' @update-description Adjusting age groups for 1991's census
 #' -----------------------------------------------------
 options(scipen = 9999999)
 rm(list = ls())
@@ -224,6 +224,7 @@ for(i in seq_along(anos)){
       )
   } else{
     censo <- censo |>
+      filter(idade >= 16) |>
       mutate(
         idade = case_when(idade >= 75 ~ 75, TRUE ~ idade),
         ano_nascimento = ano - idade
