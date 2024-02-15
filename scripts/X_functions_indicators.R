@@ -10,6 +10,7 @@
 ## Function
 
 labor_force_rates <- function(
+    df,
     peso = "peso",
     grupo_etario = "idade_quinquenal",
     coorte_nascimento = "coorte_quinquenal",
@@ -25,7 +26,7 @@ labor_force_rates <- function(
 
     # Dataframe
     df <- get(glue::glue("df")) |>
-      select(
+      dplyr::select(
         peso = all_of(peso),
         grupo_etario = all_of(grupo_etario),
         coorte_nascimento = all_of(coorte_nascimento),
@@ -35,37 +36,38 @@ labor_force_rates <- function(
     # Numerator
 
     num <- df |>
-      filter(PEA == 1) |>
-      summarise(
+      dplyr::filter(PEA == 1) |>
+      dplyr::summarise(
         numerador = sum(peso),
         .by = c(coorte_nascimento, grupo_etario)
       ) |>
-      arrange(grupo_etario)
+      dplyr::arrange(grupo_etario)
 
     # Denominator
 
     den <- df |>
-      summarise(
+      dplyr::summarise(
         denominador = sum(peso),
         .by = c(coorte_nascimento, grupo_etario)
       ) |>
-      arrange(grupo_etario)
+      dplyr::arrange(grupo_etario)
 
     # join
 
     table <- num |>
-      left_join(
+      dplyr::left_join(
         den,
         by = c("coorte_nascimento","grupo_etario"),
         keep = FALSE
       ) |>
-      mutate(across(everything(),~ round(.x,0))) |>
-      mutate(taxa = numerador/denominador)
-  } if(tipo == "sexo"){
+      dplyr::mutate(across(everything(),~ round(.x,0))) |>
+      dplyr::mutate(taxa = numerador/denominador)
+  }
+  if(tipo == "sexo"){
 
     # Dataframe
     df <- get(glue::glue("df")) |>
-      select(
+      dplyr::select(
         peso = all_of(peso),
         grupo_etario = all_of(grupo_etario),
         coorte_nascimento = all_of(coorte_nascimento),
@@ -76,40 +78,41 @@ labor_force_rates <- function(
     # Numerator
 
     num <- df |>
-      filter(PEA == 1) |>
-      summarise(
+      dplyr::filter(PEA == 1) |>
+      dplyr::summarise(
         numerador = sum(peso),
         .by = c(coorte_nascimento, grupo_etario, sexo)
       ) |>
-      arrange(grupo_etario)
+      dplyr::arrange(grupo_etario)
 
     # Denominator
 
     den <- df |>
-      summarise(
+      dplyr::summarise(
         denominador = sum(peso),
         .by = c(coorte_nascimento, grupo_etario, sexo)
       ) |>
-      arrange(grupo_etario)
+      dplyr::arrange(grupo_etario)
 
     # join
 
     table <- num |>
-      left_join(
+      dplyr::left_join(
         den,
         by = c("coorte_nascimento","grupo_etario", "sexo"),
         keep = FALSE
       ) |>
-      mutate(across(everything(),~ round(.x,0))) |>
-      mutate(taxa = numerador/denominador) |>
-      mutate(
+      dplyr::mutate(across(everything(),~ round(.x,0))) |>
+      dplyr::mutate(taxa = numerador/denominador) |>
+      dplyr::mutate(
         sexo = factor(sexo, levels = c(2,1), labels = c("Feminino","Masculino"))
       )
-  } if(tipo == "sexo e raca"){
+  }
+  if(tipo == "sexo e raca"){
 
     # Dataframe
     df <- get(glue::glue("df")) |>
-      select(
+      dplyr::select(
         peso = all_of(peso),
         grupo_etario = all_of(grupo_etario),
         coorte_nascimento = all_of(coorte_nascimento),
@@ -121,33 +124,33 @@ labor_force_rates <- function(
     # Numerator
 
     num <- df |>
-      filter(PEA == 1) |>
-      summarise(
+      dplyr::filter(PEA == 1) |>
+      dplyr::summarise(
         numerador = sum(peso),
         .by = c(coorte_nascimento, grupo_etario, sexo,cor_raca)
       ) |>
-      arrange(grupo_etario)
+      dplyr::arrange(grupo_etario)
 
     # Denominator
 
     den <- df |>
-      summarise(
+      dplyr::summarise(
         denominador = sum(peso),
         .by = c(coorte_nascimento, grupo_etario, sexo, cor_raca)
       ) |>
-      arrange(grupo_etario)
+      dplyr::arrange(grupo_etario)
 
     # join
 
     table <- num |>
-      left_join(
+      dplyr::left_join(
         den,
         by = c("coorte_nascimento","grupo_etario", "sexo", "cor_raca"),
         keep = FALSE
       ) |>
-      mutate(across(everything(),~ round(.x,0))) |>
+      dplyr::mutate(across(everything(),~ round(.x,0))) |>
       mutate(taxa = numerador/denominador) |>
-      mutate(
+      dplyr::mutate(
         sexo = factor(sexo, levels = c(2,1), labels = c("Feminino","Masculino")),
         cor_raca = factor(
           cor_raca,
@@ -155,11 +158,12 @@ labor_force_rates <- function(
           labels = c("Branco","Preto","Indígena","Amarelo","Pardo","NR")
         )
       )
-  } if(tipo == "sexo e escolaridade"){
+  }
+  if(tipo == "sexo e escolaridade"){
 
     # Dataframe
     df <- get(glue::glue("df")) |>
-      select(
+      dplyr::select(
         peso = all_of(peso),
         grupo_etario = all_of(grupo_etario),
         coorte_nascimento = all_of(coorte_nascimento),
@@ -171,33 +175,33 @@ labor_force_rates <- function(
     # Numerator
 
     num <- df |>
-      filter(PEA == 1) |>
+      dplyr::filter(PEA == 1) |>
       summarise(
         numerador = sum(peso),
         .by = c(coorte_nascimento, grupo_etario, sexo, escolaridade)
       ) |>
-      arrange(grupo_etario)
+      dplyr::arrange(grupo_etario)
 
     # Denominator
 
     den <- df |>
-      summarise(
+      dplyr::summarise(
         denominador = sum(peso),
         .by = c(coorte_nascimento, grupo_etario, sexo, escolaridade)
       ) |>
-      arrange(grupo_etario)
+      dplyr::arrange(grupo_etario)
 
     # join
 
     table <- num |>
-      left_join(
+      dplyr::left_join(
         den,
         by = c("coorte_nascimento","grupo_etario", "sexo", "escolaridade"),
         keep = FALSE
       ) |>
-      mutate(across(everything(),~ round(.x,0))) |>
-      mutate(taxa = numerador/denominador) |>
-      mutate(
+      dplyr::mutate(across(everything(),~ round(.x,0))) |>
+      dplyr::mutate(taxa = numerador/denominador) |>
+      dplyr::mutate(
         sexo = factor(sexo, levels = c(2,1), labels = c("Feminino","Masculino")),
         escolaridade = factor(
           escolaridade,
@@ -216,6 +220,7 @@ labor_force_rates <- function(
 ## Function
 
 ocupation_level <- function(
+    df,
     peso = "peso",
     grupo_etario = "idade_quinquenal",
     coorte_nascimento = "coorte_quinquenal",
@@ -231,7 +236,7 @@ ocupation_level <- function(
 
     # Dataframe
     df <- get(glue::glue("df")) |>
-      select(
+      dplyr::select(
         peso = all_of(peso),
         grupo_etario = all_of(grupo_etario),
         coorte_nascimento = all_of(coorte_nascimento),
@@ -241,37 +246,38 @@ ocupation_level <- function(
     # Numerator
 
     num <- df |>
-      filter(PO == 1) |>
-      summarise(
+      dplyr::filter(PO == 1) |>
+      dplyr::summarise(
         numerador = sum(peso),
         .by = c(coorte_nascimento, grupo_etario)
       ) |>
-      arrange(grupo_etario)
+      dplyr::arrange(grupo_etario)
 
     # Denominator
 
     den <- df |>
-      summarise(
+      dplyr::summarise(
         denominador = sum(peso),
         .by = c(coorte_nascimento, grupo_etario)
       ) |>
-      arrange(grupo_etario)
+      dplyr::arrange(grupo_etario)
 
     # join
 
     table <- num |>
-      left_join(
+      dplyr::left_join(
         den,
         by = c("coorte_nascimento","grupo_etario"),
         keep = FALSE
       ) |>
-      mutate(across(everything(),~ round(.x,0))) |>
-      mutate(taxa = numerador/denominador)
-  } if(tipo == "sexo"){
+      dplyr::mutate(across(everything(),~ round(.x,0))) |>
+      dplyr::mutate(taxa = numerador/denominador)
+  }
+  if(tipo == "sexo"){
 
     # Dataframe
     df <- get(glue::glue("df")) |>
-      select(
+      dplyr::select(
         peso = all_of(peso),
         grupo_etario = all_of(grupo_etario),
         coorte_nascimento = all_of(coorte_nascimento),
@@ -282,40 +288,41 @@ ocupation_level <- function(
     # Numerator
 
     num <- df |>
-      filter(PO == 1) |>
-      summarise(
+      dplyr::filter(PO == 1) |>
+      dplyr::summarise(
         numerador = sum(peso),
         .by = c(coorte_nascimento, grupo_etario, sexo)
       ) |>
-      arrange(grupo_etario)
+      dplyr::arrange(grupo_etario)
 
     # Denominator
 
     den <- df |>
-      summarise(
+      dplyr::summarise(
         denominador = sum(peso),
         .by = c(coorte_nascimento, grupo_etario, sexo)
       ) |>
-      arrange(grupo_etario)
+      dplyr::arrange(grupo_etario)
 
     # join
 
     table <- num |>
-      left_join(
+      dplyr::left_join(
         den,
         by = c("coorte_nascimento","grupo_etario", "sexo"),
         keep = FALSE
       ) |>
-      mutate(across(everything(),~ round(.x,0))) |>
-      mutate(taxa = numerador/denominador) |>
-      mutate(
+      dplyr::mutate(across(everything(),~ round(.x,0))) |>
+      dplyr::mutate(taxa = numerador/denominador) |>
+      dplyr::mutate(
         sexo = factor(sexo, levels = c(2,1), labels = c("Feminino","Masculino"))
       )
-  } if(tipo == "sexo e raca"){
+  }
+  if(tipo == "sexo e raca"){
 
     # Dataframe
     df <- get(glue::glue("df")) |>
-      select(
+      dplyr::select(
         peso = all_of(peso),
         grupo_etario = all_of(grupo_etario),
         coorte_nascimento = all_of(coorte_nascimento),
@@ -327,33 +334,33 @@ ocupation_level <- function(
     # Numerator
 
     num <- df |>
-      filter(PO == 1) |>
-      summarise(
+      dplyr::filter(PO == 1) |>
+      dplyr::summarise(
         numerador = sum(peso),
         .by = c(coorte_nascimento, grupo_etario, sexo,cor_raca)
       ) |>
-      arrange(grupo_etario)
+      dplyr::arrange(grupo_etario)
 
     # Denominator
 
     den <- df |>
-      summarise(
+      dplyr::summarise(
         denominador = sum(peso),
         .by = c(coorte_nascimento, grupo_etario, sexo, cor_raca)
       ) |>
-      arrange(grupo_etario)
+      dplyr::arrange(grupo_etario)
 
     # join
 
     table <- num |>
-      left_join(
+      dplyr::left_join(
         den,
         by = c("coorte_nascimento","grupo_etario", "sexo", "cor_raca"),
         keep = FALSE
       ) |>
-      mutate(across(everything(),~ round(.x,0))) |>
-      mutate(taxa = numerador/denominador) |>
-      mutate(
+      dplyr::mutate(across(everything(),~ round(.x,0))) |>
+      dplyr::mutate(taxa = numerador/denominador) |>
+      dplyr::mutate(
         sexo = factor(sexo, levels = c(2,1), labels = c("Feminino","Masculino")),
         cor_raca = factor(
           cor_raca,
@@ -361,11 +368,12 @@ ocupation_level <- function(
           labels = c("Branco","Preto","Indígena","Amarelo","Pardo","NR")
         )
       )
-  } if(tipo == "sexo e escolaridade"){
+  }
+  if(tipo == "sexo e escolaridade"){
 
     # Dataframe
     df <- get(glue::glue("df")) |>
-      select(
+      dplyr::select(
         peso = all_of(peso),
         grupo_etario = all_of(grupo_etario),
         coorte_nascimento = all_of(coorte_nascimento),
@@ -377,33 +385,33 @@ ocupation_level <- function(
     # Numerator
 
     num <- df |>
-      filter(PO == 1) |>
+      dplyr::filter(PO == 1) |>
       summarise(
         numerador = sum(peso),
         .by = c(coorte_nascimento, grupo_etario, sexo, escolaridade)
       ) |>
-      arrange(grupo_etario)
+      dplyr::arrange(grupo_etario)
 
     # Denominator
 
     den <- df |>
-      summarise(
+      dplyr::summarise(
         denominador = sum(peso),
         .by = c(coorte_nascimento, grupo_etario, sexo, escolaridade)
       ) |>
-      arrange(grupo_etario)
+      dplyr::arrange(grupo_etario)
 
     # join
 
     table <- num |>
-      left_join(
+      dplyr::left_join(
         den,
         by = c("coorte_nascimento","grupo_etario", "sexo", "escolaridade"),
         keep = FALSE
       ) |>
-      mutate(across(everything(),~ round(.x,0))) |>
-      mutate(taxa = numerador/denominador) |>
-      mutate(
+      dplyr::mutate(across(everything(),~ round(.x,0))) |>
+      dplyr::mutate(taxa = numerador/denominador) |>
+      dplyr::mutate(
         sexo = factor(sexo, levels = c(2,1), labels = c("Feminino","Masculino")),
         escolaridade = factor(
           escolaridade,
@@ -422,6 +430,7 @@ ocupation_level <- function(
 ## Function
 
 undergraduate_level <- function(
+    df,
     peso = "peso",
     grupo_etario = "idade_quinquenal",
     coorte_nascimento = "coorte_quinquenal",
@@ -436,7 +445,7 @@ undergraduate_level <- function(
 
     # Dataframe
     df <- get(glue::glue("df")) |>
-      select(
+      dplyr::select(
         peso = all_of(peso),
         grupo_etario = all_of(grupo_etario),
         coorte_nascimento = all_of(coorte_nascimento),
@@ -446,37 +455,38 @@ undergraduate_level <- function(
     # Numerator
 
     num <- df |>
-      filter(escolaridade == 4) |>
-      summarise(
+      dplyr::filter(escolaridade == 4) |>
+      dplyr::summarise(
         numerador = sum(peso),
         .by = c(coorte_nascimento, grupo_etario)
       ) |>
-      arrange(grupo_etario)
+      dplyr::arrange(grupo_etario)
 
     # Denominator
 
     den <- df |>
-      summarise(
+      dplyr::summarise(
         denominador = sum(peso),
         .by = c(coorte_nascimento, grupo_etario)
       ) |>
-      arrange(grupo_etario)
+      dplyr::arrange(grupo_etario)
 
     # join
 
     table <- num |>
-      left_join(
+      dplyr::left_join(
         den,
         by = c("coorte_nascimento","grupo_etario"),
         keep = FALSE
       ) |>
-      mutate(across(everything(),~ round(.x,0))) |>
-      mutate(taxa = numerador/denominador)
-  } if(tipo == "sexo"){
+      dplyr::mutate(across(everything(),~ round(.x,0))) |>
+      dplyr::mutate(taxa = numerador/denominador)
+  }
+  if(tipo == "sexo"){
 
     # Dataframe
     df <- get(glue::glue("df")) |>
-      select(
+      dplyr::select(
         peso = all_of(peso),
         grupo_etario = all_of(grupo_etario),
         coorte_nascimento = all_of(coorte_nascimento),
@@ -487,40 +497,41 @@ undergraduate_level <- function(
     # Numerator
 
     num <- df |>
-      filter(escolaridade == 4) |>
-      summarise(
+      dplyr::filter(escolaridade == 4) |>
+      dplyr::summarise(
         numerador = sum(peso),
         .by = c(coorte_nascimento, grupo_etario, sexo)
       ) |>
-      arrange(grupo_etario)
+      dplyr::arrange(grupo_etario)
 
     # Denominator
 
     den <- df |>
-      summarise(
+      dplyr::summarise(
         denominador = sum(peso),
         .by = c(coorte_nascimento, grupo_etario, sexo)
       ) |>
-      arrange(grupo_etario)
+      dplyr::arrange(grupo_etario)
 
     # join
 
     table <- num |>
-      left_join(
+      dplyr::left_join(
         den,
         by = c("coorte_nascimento","grupo_etario", "sexo"),
         keep = FALSE
       ) |>
-      mutate(across(everything(),~ round(.x,0))) |>
-      mutate(taxa = numerador/denominador) |>
-      mutate(
+      dplyr::mutate(across(everything(),~ round(.x,0))) |>
+      dplyr::mutate(taxa = numerador/denominador) |>
+      dplyr::mutate(
         sexo = factor(sexo, levels = c(2,1), labels = c("Feminino","Masculino"))
       )
-  } if(tipo == "sexo e raca"){
+  }
+  if(tipo == "sexo e raca"){
 
     # Dataframe
     df <- get(glue::glue("df")) |>
-      select(
+      dplyr::select(
         peso = all_of(peso),
         grupo_etario = all_of(grupo_etario),
         coorte_nascimento = all_of(coorte_nascimento),
@@ -532,33 +543,33 @@ undergraduate_level <- function(
     # Numerator
 
     num <- df |>
-      filter(escolaridade == 4) |>
-      summarise(
+      dplyr::filter(escolaridade == 4) |>
+      dplyr::summarise(
         numerador = sum(peso),
         .by = c(coorte_nascimento, grupo_etario, sexo,cor_raca)
       ) |>
-      arrange(grupo_etario)
+      dplyr::arrange(grupo_etario)
 
     # Denominator
 
     den <- df |>
-      summarise(
+      dplyr::summarise(
         denominador = sum(peso),
         .by = c(coorte_nascimento, grupo_etario, sexo, cor_raca)
       ) |>
-      arrange(grupo_etario)
+      dplyr::arrange(grupo_etario)
 
     # join
 
     table <- num |>
-      left_join(
+      dplyr::left_join(
         den,
         by = c("coorte_nascimento","grupo_etario", "sexo", "cor_raca"),
         keep = FALSE
       ) |>
-      mutate(across(everything(),~ round(.x,0))) |>
-      mutate(taxa = numerador/denominador) |>
-      mutate(
+      dplyr::mutate(across(everything(),~ round(.x,0))) |>
+      dplyr::mutate(taxa = numerador/denominador) |>
+      dplyr::mutate(
         sexo = factor(sexo, levels = c(2,1), labels = c("Feminino","Masculino")),
         cor_raca = factor(
           cor_raca,
@@ -577,6 +588,7 @@ undergraduate_level <- function(
 ## Function
 
 high_labor_force <- function(
+    df,
     peso = "peso",
     grupo_etario = "idade_quinquenal",
     coorte_nascimento = "coorte_quinquenal",
@@ -591,7 +603,7 @@ high_labor_force <- function(
 
     # Dataframe
     df <- get(glue::glue("df")) |>
-      select(
+      dplyr::select(
         peso = all_of(peso),
         grupo_etario = all_of(grupo_etario),
         coorte_nascimento = all_of(coorte_nascimento),
@@ -602,38 +614,39 @@ high_labor_force <- function(
     # Numerator
 
     num <- df |>
-      filter(escolaridade == 4 & PO == 1) |>
-      summarise(
+      dplyr::filter(escolaridade == 4 & PO == 1) |>
+      dplyr::summarise(
         numerador = sum(peso),
         .by = c(coorte_nascimento, grupo_etario)
       ) |>
-      arrange(grupo_etario)
+      dplyr::arrange(grupo_etario)
 
     # Denominator
 
     den <- df |>
-      filter(PO == 1) |>
-      summarise(
+      dplyr::filter(PO == 1) |>
+      dplyr::summarise(
         denominador = sum(peso),
         .by = c(coorte_nascimento, grupo_etario)
       ) |>
-      arrange(grupo_etario)
+      dplyr::arrange(grupo_etario)
 
     # join
 
     table <- num |>
-      left_join(
+      dplyr::left_join(
         den,
         by = c("coorte_nascimento","grupo_etario"),
         keep = FALSE
       ) |>
-      mutate(across(everything(),~ round(.x,0))) |>
-      mutate(taxa = numerador/denominador)
-  } if(tipo == "sexo"){
+      dplyr::mutate(across(everything(),~ round(.x,0))) |>
+      dplyr::mutate(taxa = numerador/denominador)
+  }
+  if(tipo == "sexo"){
 
     # Dataframe
     df <- get(glue::glue("df")) |>
-      select(
+      dplyr::select(
         peso = all_of(peso),
         grupo_etario = all_of(grupo_etario),
         coorte_nascimento = all_of(coorte_nascimento),
@@ -645,41 +658,42 @@ high_labor_force <- function(
     # Numerator
 
     num <- df |>
-      filter(escolaridade == 4 & PO == 1) |>
-      summarise(
+      dplyr::filter(escolaridade == 4 & PO == 1) |>
+      dplyr::summarise(
         numerador = sum(peso),
         .by = c(coorte_nascimento, grupo_etario, sexo)
       ) |>
-      arrange(grupo_etario)
+      dplyr::arrange(grupo_etario)
 
     # Denominator
 
     den <- df |>
-      filter(PO == 1) |>
-      summarise(
+      dplyr::filter(PO == 1) |>
+      dplyr::summarise(
         denominador = sum(peso),
         .by = c(coorte_nascimento, grupo_etario, sexo)
       ) |>
-      arrange(grupo_etario)
+      dplyr::arrange(grupo_etario)
 
     # join
 
     table <- num |>
-      left_join(
+      dplyr::left_join(
         den,
         by = c("coorte_nascimento","grupo_etario", "sexo"),
         keep = FALSE
       ) |>
-      mutate(across(everything(),~ round(.x,0))) |>
-      mutate(taxa = numerador/denominador) |>
-      mutate(
+      dplyr::mutate(across(everything(),~ round(.x,0))) |>
+      dplyr::mutate(taxa = numerador/denominador) |>
+      dplyr::mutate(
         sexo = factor(sexo, levels = c(2,1), labels = c("Feminino","Masculino"))
       )
-  } if(tipo == "sexo e raca"){
+  }
+  if(tipo == "sexo e raca"){
 
     # Dataframe
     df <- get(glue::glue("df")) |>
-      select(
+      dplyr::select(
         peso = all_of(peso),
         grupo_etario = all_of(grupo_etario),
         coorte_nascimento = all_of(coorte_nascimento),
@@ -692,34 +706,34 @@ high_labor_force <- function(
     # Numerator
 
     num <- df |>
-      filter(escolaridade == 4 & PO == 1) |>
-      summarise(
+      dplyr::filter(escolaridade == 4 & PO == 1) |>
+      dplyr::summarise(
         numerador = sum(peso),
         .by = c(coorte_nascimento, grupo_etario, sexo,cor_raca)
       ) |>
-      arrange(grupo_etario)
+      dplyr::arrange(grupo_etario)
 
     # Denominator
 
     den <- df |>
-      filter(PO == 1) |>
-      summarise(
+      dplyr::filter(PO == 1) |>
+      dplyr::summarise(
         denominador = sum(peso),
         .by = c(coorte_nascimento, grupo_etario, sexo, cor_raca)
       ) |>
-      arrange(grupo_etario)
+      dplyr::arrange(grupo_etario)
 
     # join
 
     table <- num |>
-      left_join(
+      dplyr::left_join(
         den,
         by = c("coorte_nascimento","grupo_etario", "sexo", "cor_raca"),
         keep = FALSE
       ) |>
-      mutate(across(everything(),~ round(.x,0))) |>
-      mutate(taxa = numerador/denominador) |>
-      mutate(
+      dplyr::mutate(across(everything(),~ round(.x,0))) |>
+      dplyr::mutate(taxa = numerador/denominador) |>
+      dplyr::mutate(
         sexo = factor(sexo, levels = c(2,1), labels = c("Feminino","Masculino")),
         cor_raca = factor(
           cor_raca,
