@@ -204,7 +204,7 @@ for(i in seq_along(anos)){
           ano_nascimento %in% 1896:1900 ~ 1896,
           ano_nascimento %in% 1891:1895 ~ 1891,
           ano_nascimento %in% 1886:1890 ~ 1886,
-          ano_nascimento < 1896 ~ 1895
+          ano_nascimento < 1886 ~ 1885
         ),
         coorte_decenal = case_when(
           ano_nascimento %in% 1996:2005 ~ 1996,
@@ -219,7 +219,7 @@ for(i in seq_along(anos)){
           ano_nascimento %in% 1906:1915 ~ 1906,
           ano_nascimento %in% 1896:1905 ~ 1896,
           ano_nascimento %in% 1886:1895 ~ 1886,
-          ano_nascimento < 1896 ~ 1895
+          ano_nascimento < 1886 ~ 1885
         )
       )
   } else{
@@ -279,7 +279,7 @@ for(i in seq_along(anos)){
           ano_nascimento %in% 1896:1900 ~ 1896,
           ano_nascimento %in% 1891:1895 ~ 1891,
           ano_nascimento %in% 1886:1890 ~ 1886,
-          ano_nascimento < 1896 ~ 1895
+          ano_nascimento < 1886 ~ 1885
         ),
         coorte_decenal = case_when(
           ano_nascimento %in% 1996:2005 ~ 1996,
@@ -294,7 +294,7 @@ for(i in seq_along(anos)){
           ano_nascimento %in% 1906:1915 ~ 1906,
           ano_nascimento %in% 1896:1905 ~ 1896,
           ano_nascimento %in% 1886:1895 ~ 1886,
-          ano_nascimento < 1896 ~ 1895
+          ano_nascimento < 1886 ~ 1885
         )
       )
   }
