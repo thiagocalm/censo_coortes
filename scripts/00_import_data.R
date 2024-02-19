@@ -1,8 +1,8 @@
 #' ------------------------------------------------------
 #' @author Thiago Cordeiro Almeida
 #' @code-description Download data
-#' @last-update 2024-02-15
-#' @update-description Adjusting age groups for 1991's census
+#' @last-update 2024-02-19
+#' @update-description Including occupation variables (OCC, non harmonized, and OCCISCO, harmonized)
 #' -----------------------------------------------------
 options(scipen = 9999999)
 rm(list = ls())
@@ -13,10 +13,9 @@ invisible(gc())
 if(!require("pacman")) install.packages(("pacman"))
 pacman::p_load(tidyverse, ipumsr)
 
-
 # Import in loop ----------------------------------------------------------
 
-anos <- c(1960,1970,1980, 1991, 2000, 2010)
+anos <- c(1960, 1970, 1980, 1991, 2000, 2010)
 
 for(i in seq_along(anos)){
   ano = anos[i]
