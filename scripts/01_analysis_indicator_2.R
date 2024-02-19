@@ -1,8 +1,8 @@
 #' ------------------------------------------------------
 #' @author Thiago Cordeiro Almeida
-#' @code-description Analysis - Indicator 1 - Participation in the labor force rates
+#' @code-description Analysis - Indicator 2 - Occupation Level
 #' @last-update 2024-02-19
-#' @update-description Adjusting outputs
+#' @update-description Starting analysis
 #' -----------------------------------------------------
 options(scipen = 9999999)
 rm(list = ls())
@@ -35,7 +35,7 @@ for(i in seq_along(years)){
 
   # Total
 
-  total_10age <- labor_force_rates(
+  total_10age <- occupation_level(
     df = data,
     grupo_etario = "idade_decenal",
     coorte_nascimento = "coorte_decenal",
@@ -45,7 +45,7 @@ for(i in seq_along(years)){
 
   # By sex
 
-  sex_10age <- labor_force_rates(
+  sex_10age <- occupation_level(
     df = data,
     grupo_etario = "idade_decenal",
     coorte_nascimento = "coorte_decenal",
@@ -55,7 +55,7 @@ for(i in seq_along(years)){
 
   # By sex and race
 
-  sex_race_10age <- labor_force_rates(
+  sex_race_10age <- occupation_level(
     df = data,
     grupo_etario = "idade_decenal",
     coorte_nascimento = "coorte_decenal",
@@ -65,7 +65,7 @@ for(i in seq_along(years)){
 
   # By sex and education level
 
-  sex_educ_10age <- labor_force_rates(
+  sex_educ_10age <- occupation_level(
     df = data,
     grupo_etario = "idade_decenal",
     coorte_nascimento = "coorte_decenal",
@@ -73,36 +73,51 @@ for(i in seq_along(years)){
   ) |>
     mutate(ano = years[i])
 
+  # By sex and occupation code (aggregated)
+
+  sex_ocup_10age <- occupation_level(
+    df = data,
+    grupo_etario = "idade_decenal",
+    coorte_nascimento = "coorte_decenal",
+    tipo = "sexo e ocupacao"
+  ) |>
+    mutate(ano = years[i])
+
   # output
 
   if(i == 1){
     # 10-years-aged
-    labor_force_total_10age <- total_10age
+    occup_level_total_10age <- total_10age
 
-    labor_force_sex_10age <- sex_10age
+    occup_level_sex_10age <- sex_10age
 
-    labor_force_sex_race_10age <- sex_race_10age
+    occup_level_sex_race_10age <- sex_race_10age
 
-    labor_force_sex_educ_10age <- sex_educ_10age
+    occup_level_sex_educ_10age <- sex_educ_10age
+
+    occup_level_sex_ocup_10age <- sex_ocup_10age
 
   } else{
     # 10-years-aged
-    labor_force_total_10age <- labor_force_total_10age |>
+    occup_level_total_10age <- occup_level_total_10age |>
       bind_rows(total_10age)
 
-    labor_force_sex_10age <- labor_force_sex_10age |>
+    occup_level_sex_10age <- occup_level_sex_10age |>
       bind_rows(sex_10age)
 
-    labor_force_sex_race_10age <- labor_force_sex_race_10age |>
+    occup_level_sex_race_10age <- occup_level_sex_race_10age |>
       bind_rows(sex_race_10age)
 
-    labor_force_sex_educ_10age <- labor_force_sex_educ_10age |>
+    occup_level_sex_educ_10age <- occup_level_sex_educ_10age |>
       bind_rows(sex_educ_10age)
+
+    occup_level_sex_ocup_10age <- occup_level_sex_ocup_10age |>
+      bind_rows(sex_ocup_10age)
 
   }
 
   # next loop
-  rm(total_10age, sex_10age, sex_race_10age, sex_educ_10age)
+  rm(total_10age, sex_10age, sex_race_10age, sex_educ_10age, sex_ocup_10age)
 
   print(paste0("Year ", years[i]," is finished!!!"))
 }
@@ -111,10 +126,10 @@ for(i in seq_along(years)){
 
 ## 10-years - Total
 
-table_export <-  labor_force_total_10age |>
+table_export <-  occup_level_total_10age |>
   select(ano, everything()) |>
   rename(
-    "PEA" = numerador,
+    "PO" = numerador,
     "PIA" = denominador,
   ) |>
   as.data.frame()
@@ -124,7 +139,7 @@ table_export <-  labor_force_total_10age |>
 
 write.xlsx(
   table_export,
-  file = file.path("./outputs","Indicador 1 - Taxa de participação - base de dados.xlsx"),
+  file = file.path("./outputs","Indicador 2 - Nível de ocupação - base de dados.xlsx"),
   row.names = FALSE,
   col.names = TRUE,
   sheetName = "1_tot_10anos",
@@ -134,10 +149,10 @@ write.xlsx(
 
 ## 10-years - By sex
 
-table_export <-  labor_force_sex_10age |>
+table_export <-  occup_level_sex_10age |>
   select(ano, everything()) |>
   rename(
-    "PEA" = numerador,
+    "PO" = numerador,
     "PIA" = denominador,
   ) |>
   as.data.frame()
@@ -147,7 +162,7 @@ table_export <-  labor_force_sex_10age |>
 
 write.xlsx(
   table_export,
-  file = file.path("./outputs","Indicador 1 - Taxa de participação - base de dados.xlsx"),
+  file = file.path("./outputs","Indicador 2 - Nível de ocupação - base de dados.xlsx"),
   row.names = FALSE,
   col.names = TRUE,
   sheetName = "2_sex_10anos",
@@ -157,10 +172,10 @@ write.xlsx(
 
 ## 10-years - By sex and race
 
-table_export <-  labor_force_sex_race_10age |>
+table_export <-  occup_level_sex_race_10age |>
   select(ano, everything()) |>
   rename(
-    "PEA" = numerador,
+    "PO" = numerador,
     "PIA" = denominador,
   ) |>
   as.data.frame()
@@ -170,7 +185,7 @@ table_export <-  labor_force_sex_race_10age |>
 
 write.xlsx(
   table_export,
-  file = file.path("./outputs","Indicador 1 - Taxa de participação - base de dados.xlsx"),
+  file = file.path("./outputs","Indicador 2 - Nível de ocupação - base de dados.xlsx"),
   row.names = FALSE,
   col.names = TRUE,
   sheetName = "3_sex_raca_10anos",
@@ -180,10 +195,10 @@ write.xlsx(
 
 ## 10-years - By sex and education
 
-table_export <-  labor_force_sex_educ_10age |>
+table_export <-  occup_level_sex_educ_10age |>
   select(ano, everything()) |>
   rename(
-    "PEA" = numerador,
+    "PO" = numerador,
     "PIA" = denominador,
   ) |>
   as.data.frame()
@@ -193,10 +208,33 @@ table_export <-  labor_force_sex_educ_10age |>
 
 write.xlsx(
   table_export,
-  file = file.path("./outputs","Indicador 1 - Taxa de participação - base de dados.xlsx"),
+  file = file.path("./outputs","Indicador 2 - Nível de ocupação - base de dados.xlsx"),
   row.names = FALSE,
   col.names = TRUE,
   sheetName = "4_sex_educ_10anos",
+  append = TRUE,
+  showNA = FALSE
+)
+
+## 10-years - By sex and occupation
+
+table_export <-  occup_level_sex_ocup_10age |>
+  select(ano, everything()) |>
+  rename(
+    "PO" = numerador,
+    "PIA" = denominador,
+  ) |>
+  as.data.frame()
+
+
+# Saving file
+
+write.xlsx(
+  table_export,
+  file = file.path("./outputs","Indicador 2 - Nível de ocupação - base de dados.xlsx"),
+  row.names = FALSE,
+  col.names = TRUE,
+  sheetName = "5_sex_ocup_10anos",
   append = TRUE,
   showNA = FALSE
 )

@@ -215,11 +215,11 @@ labor_force_rates <- function(
   return(table)
 }
 
-# Indicator 2 - Ocupation level --------------------------------------
+# Indicator 2 - Occupation level --------------------------------------
 
 ## Function
 
-ocupation_level <- function(
+occupation_level <- function(
     df,
     peso = "peso",
     grupo_etario = "idade_quinquenal",
@@ -455,7 +455,7 @@ ocupation_level <- function(
         sexo = factor(sexo, levels = c(2,1), labels = c("Feminino","Masculino")),
         ocupacao = factor(
           ocupacao,
-          levels = c(1,2,3,4,8,9,10,11,97,98,99),
+          levels = c(1,2,3,4,5,6,7,8,9,10,11,98,99),
           labels = c(
             "Legislatos, senior official and managers",
             "Professionals",
@@ -468,7 +468,6 @@ ocupation_level <- function(
             "Elementary occupations",
             "Armed forces",
             "Other occupations, unspecified or n.e.c.",
-            "Response suppressed",
             "Unknown",
             "Not in universe"
           )
