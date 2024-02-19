@@ -62,6 +62,8 @@ for(i in seq_along(anos)){
                 "escolaridade" = edattain,
                 "cond_atividade" = empstat,
                 "cond_forca_trabalho" = labforce,
+                "cod_ocupacao_2d" = occisco,
+                "cod_ocupacao_4d" = occ,
                 "posicao_ocupacao" = classwk
               ) |>
               select(-any_of(c("country", 'sample', "serial", "hhwt", "pernum", "filhos_vivos",
@@ -107,6 +109,8 @@ for(i in seq_along(anos)){
                 "escolaridade" = edattain,
                 "cond_atividade" = empstat,
                 "cond_forca_trabalho" = labforce,
+                "cod_ocupacao_2d" = occisco,
+                "cod_ocupacao_4d" = occ,
                 "posicao_ocupacao" = classwk
               ) |>
               select(-any_of(c("country", 'sample', "serial", "hhwt", "pernum", "filhos_vivos",
