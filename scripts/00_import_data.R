@@ -229,7 +229,7 @@ for(i in seq_along(anos)){
     censo <- censo |>
       filter(idade >= 16) |>
       mutate(
-        idade = case_when(idade >= 75 ~ 75, TRUE ~ idade),
+        idade = case_when(idade >= 76 ~ 76, TRUE ~ idade),
         ano_nascimento = ano - idade
       ) |>
       mutate(
