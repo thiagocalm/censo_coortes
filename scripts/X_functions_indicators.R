@@ -474,6 +474,41 @@ occupation_level <- function(
         )
       )
   }
+  if(tipo == "sexo e ocupacao4d"){
+
+    # Dataframe
+    df <- get(glue::glue("df")) |>
+      dplyr::select(
+        peso = all_of(peso),
+        grupo_etario = all_of(grupo_etario),
+        coorte_nascimento = all_of(coorte_nascimento),
+        PO = all_of(PO),
+        sexo = "sexo",
+        ocupacao = "cod_ocupacao_4d"
+      )
+
+    # Numerator
+
+    num <- df |>
+      dplyr::filter(PO == 1) |>
+      summarise(
+        numerador = sum(peso),
+        .by = c(coorte_nascimento, grupo_etario, sexo, ocupacao)
+      ) |>
+      dplyr::arrange(grupo_etario)
+
+    # join
+
+    table <- num |>
+      dplyr::mutate(across(-ocupacao,~ round(.x,0))) |>
+      mutate(
+        denominador = 0,
+        taxa = 0
+      ) |>
+      dplyr::mutate(
+        sexo = factor(sexo, levels = c(2,1), labels = c("Feminino","Masculino"))
+      )
+  }
 
   # output
   return(table)

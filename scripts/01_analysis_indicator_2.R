@@ -31,6 +31,28 @@ for(i in seq_along(years)){
     file = file.path("./inputs",glue::glue("censo_{years[i]}.parquet"))
   )
 
+  # Transforming occupational variable in a factor type
+
+  codes <- data |> select(cod_ocupacao_4d) |> unique() |> pull()
+
+  labels <- read_csv2(
+    file = file.path("./docs","codigo_cbo_censo.csv"),
+    col_names = TRUE,
+    trim_ws = TRUE
+  ) |>
+    filter(Ano %in% years[i]) |>
+    filter(Codigo %in% codes) |>
+    select(Rotulo) |> unique() |> pull()
+
+  data <- data |>
+    mutate(
+      cod_ocupacao_4d = factor(
+        cod_ocupacao_4d,
+        levels = codes,
+        labels = labels
+      )
+    )
+
   ## 10-years aged data
 
   # Total
@@ -83,6 +105,26 @@ for(i in seq_along(years)){
   ) |>
     mutate(ano = years[i])
 
+  # By sex and occupation code (aggregated)
+
+  sex_ocup_10age <- occupation_level(
+    df = data,
+    grupo_etario = "idade_decenal",
+    coorte_nascimento = "coorte_decenal",
+    tipo = "sexo e ocupacao"
+  ) |>
+    mutate(ano = years[i])
+
+  # By sex and occupation code (disaggregated)
+
+  sex_ocup4d_10age <- occupation_level(
+    df = data,
+    grupo_etario = "idade_decenal",
+    coorte_nascimento = "coorte_decenal",
+    tipo = "sexo e ocupacao4d"
+  ) |>
+    mutate(ano = years[i])
+
   # output
 
   if(i == 1){
@@ -96,6 +138,8 @@ for(i in seq_along(years)){
     occup_level_sex_educ_10age <- sex_educ_10age
 
     occup_level_sex_ocup_10age <- sex_ocup_10age
+
+    occup_level_sex_ocup4d_10age <- sex_ocup4d_10age
 
   } else{
     # 10-years-aged
@@ -114,10 +158,13 @@ for(i in seq_along(years)){
     occup_level_sex_ocup_10age <- occup_level_sex_ocup_10age |>
       bind_rows(sex_ocup_10age)
 
+    occup_level_sex_ocup4d_10age <- occup_level_sex_ocup4d_10age |>
+      bind_rows(sex_ocup4d_10age)
+
   }
 
   # next loop
-  rm(total_10age, sex_10age, sex_race_10age, sex_educ_10age, sex_ocup_10age)
+  rm(total_10age, sex_10age, sex_race_10age, sex_educ_10age, sex_ocup_10age, sex_ocup4d_10age)
 
   print(paste0("Year ", years[i]," is finished!!!"))
 }
@@ -235,6 +282,29 @@ write.xlsx(
   row.names = FALSE,
   col.names = TRUE,
   sheetName = "5_sex_ocup_10anos",
+  append = TRUE,
+  showNA = FALSE
+)
+
+## 10-years - By sex and occupation disaggregated
+
+table_export <-  occup_level_sex_ocup4d_10age |>
+  select(ano, everything()) |>
+  rename(
+    "PO" = numerador,
+    "PIA" = denominador,
+  ) |>
+  as.data.frame()
+
+
+# Saving file
+
+write.xlsx(
+  table_export,
+  file = file.path("./outputs","Indicador 2 - Nível de ocupação - base de dados.xlsx"),
+  row.names = FALSE,
+  col.names = TRUE,
+  sheetName = "5_sex_ocup4d_10anos",
   append = TRUE,
   showNA = FALSE
 )
