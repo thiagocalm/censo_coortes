@@ -215,17 +215,17 @@ labor_force_rates <- function(
   return(table)
 }
 
-# Indicator 2 - Ocupation level --------------------------------------
+# Indicator 2 - Occupation level --------------------------------------
 
 ## Function
 
-ocupation_level <- function(
+occupation_level <- function(
     df,
     peso = "peso",
     grupo_etario = "idade_quinquenal",
     coorte_nascimento = "coorte_quinquenal",
     PO = "PO",
-    tipo # = c("total","sexo","sexo e raca","sexo e escolaridade")
+    tipo # = c("total","sexo","sexo e raca","sexo e escolaridade", "ocupacao e sexo")
 ){
 
   if(is.null(tipo)){
@@ -417,6 +417,60 @@ ocupation_level <- function(
           escolaridade,
           levels = c(1,2,3,4,9),
           labels = c("Menos que fundamental completo","Fundamental completo","Médio completo","Superior completo","NR")
+        )
+      )
+  }
+  if(tipo == "sexo e ocupacao"){
+
+    # Dataframe
+    df <- get(glue::glue("df")) |>
+      dplyr::select(
+        peso = all_of(peso),
+        grupo_etario = all_of(grupo_etario),
+        coorte_nascimento = all_of(coorte_nascimento),
+        PO = all_of(PO),
+        sexo = "sexo",
+        ocupacao = "cod_ocupacao_2d"
+      )
+
+    # Numerator
+
+    num <- df |>
+      dplyr::filter(PO == 1) |>
+      summarise(
+        numerador = sum(peso),
+        .by = c(coorte_nascimento, grupo_etario, sexo, ocupacao)
+      ) |>
+      dplyr::arrange(grupo_etario)
+
+    # join
+
+    table <- num |>
+      dplyr::mutate(across(everything(),~ round(.x,0))) |>
+      mutate(
+        denominador = 0,
+        taxa = 0
+      ) |>
+      dplyr::mutate(
+        sexo = factor(sexo, levels = c(2,1), labels = c("Feminino","Masculino")),
+        ocupacao = factor(
+          ocupacao,
+          levels = c(1,2,3,4,5,6,7,8,9,10,11,98,99),
+          labels = c(
+            "Legislatos, senior official and managers",
+            "Professionals",
+            "Technicians and associate professionals",
+            "Clerks",
+            "Service workers and shop and market sales",
+            "Skilled agricultural and fishery workers",
+            "Crafts and related traders workers",
+            "Plants and machine operators and assemblers",
+            "Elementary occupations",
+            "Armed forces",
+            "Other occupations, unspecified or n.e.c.",
+            "Unknown",
+            "Not in universe"
+          )
         )
       )
   }

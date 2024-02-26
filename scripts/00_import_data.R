@@ -1,8 +1,8 @@
 #' ------------------------------------------------------
 #' @author Thiago Cordeiro Almeida
 #' @code-description Download data
-#' @last-update 2024-02-15
-#' @update-description Adjusting age groups for 1991's census
+#' @last-update 2024-02-19
+#' @update-description Including occupation variables (OCC, non harmonized, and OCCISCO, harmonized)
 #' -----------------------------------------------------
 options(scipen = 9999999)
 rm(list = ls())
@@ -13,10 +13,9 @@ invisible(gc())
 if(!require("pacman")) install.packages(("pacman"))
 pacman::p_load(tidyverse, ipumsr)
 
-
 # Import in loop ----------------------------------------------------------
 
-anos <- c(1960,1970,1980, 1991, 2000, 2010)
+anos <- c(1960, 1970, 1980, 1991, 2000, 2010)
 
 for(i in seq_along(anos)){
   ano = anos[i]
@@ -62,6 +61,8 @@ for(i in seq_along(anos)){
                 "escolaridade" = edattain,
                 "cond_atividade" = empstat,
                 "cond_forca_trabalho" = labforce,
+                "cod_ocupacao_2d" = occisco,
+                "cod_ocupacao_4d" = occ,
                 "posicao_ocupacao" = classwk
               ) |>
               select(-any_of(c("country", 'sample', "serial", "hhwt", "pernum", "filhos_vivos",
@@ -107,6 +108,8 @@ for(i in seq_along(anos)){
                 "escolaridade" = edattain,
                 "cond_atividade" = empstat,
                 "cond_forca_trabalho" = labforce,
+                "cod_ocupacao_2d" = occisco,
+                "cod_ocupacao_4d" = occ,
                 "posicao_ocupacao" = classwk
               ) |>
               select(-any_of(c("country", 'sample', "serial", "hhwt", "pernum", "filhos_vivos",
@@ -226,7 +229,7 @@ for(i in seq_along(anos)){
     censo <- censo |>
       filter(idade >= 16) |>
       mutate(
-        idade = case_when(idade >= 75 ~ 75, TRUE ~ idade),
+        idade = case_when(idade >= 76 ~ 76, TRUE ~ idade),
         ano_nascimento = ano - idade
       ) |>
       mutate(
