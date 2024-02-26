@@ -1,8 +1,8 @@
 #' ------------------------------------------------------
 #' @author Thiago Cordeiro Almeida
 #' @code-description Analysis - Indicator 2 - Occupation Level
-#' @last-update 2024-02-19
-#' @update-description Starting analysis
+#' @last-update 2024-02-26
+#' @update-description Including disaggregated occupation analysis
 #' -----------------------------------------------------
 options(scipen = 9999999)
 rm(list = ls())
@@ -42,7 +42,7 @@ for(i in seq_along(years)){
   ) |>
     filter(Ano %in% years[i]) |>
     filter(Codigo %in% codes) |>
-    select(Rotulo) |> unique() |> pull()
+    select(Rotulo) |> pull()
 
   data <- data |>
     mutate(
