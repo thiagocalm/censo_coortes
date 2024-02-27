@@ -1,8 +1,8 @@
 #' ------------------------------------------------------
 #' @author Thiago Cordeiro Almeida
 #' @code-description Analysis - Indicator 2 - Occupation Level
-#' @last-update 2024-02-26
-#' @update-description Including disaggregated occupation analysis
+#' @last-update 2024-02-27
+#' @update-description Disaggregated occupation without labeled it
 #' -----------------------------------------------------
 options(scipen = 9999999)
 rm(list = ls())
@@ -30,28 +30,6 @@ for(i in seq_along(years)){
   data <- read_parquet(
     file = file.path("./inputs",glue::glue("censo_{years[i]}.parquet"))
   )
-
-  # Transforming occupational variable in a factor type
-
-  codes <- data |> select(cod_ocupacao_4d) |> unique() |> pull()
-
-  labels <- read_csv2(
-    file = file.path("./docs","codigo_cbo_censo.csv"),
-    col_names = TRUE,
-    trim_ws = TRUE
-  ) |>
-    filter(Ano %in% years[i]) |>
-    filter(Codigo %in% codes) |>
-    select(Rotulo) |> pull()
-
-  data <- data |>
-    mutate(
-      cod_ocupacao_4d = factor(
-        cod_ocupacao_4d,
-        levels = codes,
-        labels = labels
-      )
-    )
 
   ## 10-years aged data
 
@@ -294,6 +272,7 @@ table_export <-  occup_level_sex_ocup4d_10age |>
     "PO" = numerador,
     "PIA" = denominador,
   ) |>
+  arrange(ano, grupo_etario, ocupacao) |>
   as.data.frame()
 
 
@@ -304,7 +283,9 @@ write.xlsx(
   file = file.path("./outputs","Indicador 2 - Nível de ocupação - base de dados.xlsx"),
   row.names = FALSE,
   col.names = TRUE,
-  sheetName = "5_sex_ocup4d_10anos",
+  sheetName = "6_sex_ocup4d_10anos",
   append = TRUE,
   showNA = FALSE
 )
+
+rm(list = ls())
