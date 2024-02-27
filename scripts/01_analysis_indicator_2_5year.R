@@ -287,5 +287,11 @@ write.xlsx(
   append = TRUE,
   showNA = FALSE
 )
+write_csv2(
+  table_export,
+  file = file.path("./outputs","Indicador 2 - Nível de ocupação - base de dados.csv"),
+  col_names = TRUE,
+  append = TRUE
+)
 
 rm(list = ls())
