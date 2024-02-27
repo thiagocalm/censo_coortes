@@ -133,10 +133,10 @@ for(i in seq_along(years)){
     occup_level_sex_educ_5age <- occup_level_sex_educ_5age |>
       bind_rows(sex_educ_5age)
 
-    occup_level_sex_ocup_5age <- occup_level_sex_ocup_10age |>
+    occup_level_sex_ocup_5age <- occup_level_sex_ocup_5age |>
       bind_rows(sex_ocup_5age)
 
-    occup_level_sex_ocup4d_5age <- occup_level_sex_ocup4d_10age |>
+    occup_level_sex_ocup4d_5age <- occup_level_sex_ocup4d_5age |>
       bind_rows(sex_ocup4d_5age)
 
   }
